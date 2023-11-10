@@ -1,22 +1,50 @@
 import { useEffect, useState } from 'react'
 import Card from 'react-bootstrap/Card'
+import { FloatingActionButton } from './components/FloatingActionButton'
+import { Plus } from 'lucide-react'
 
-type Task = {
+type Note = {
   title: string
   description: string
-  date: string
+  day?: number
+  month?: number
+  year?: number
+  hour?: number
+  minutes?: number
 }
 
 function App(): JSX.Element {
-  const [tasks] = useState<Task[]>()
+  const [unnotifiedNotes] = useState<Note[]>([])
 
   useEffect(() => {
+    setInterval(() => {
+      if (unnotifiedNotes?.length < 1) return
 
+      const unnotifiedNote = unnotifiedNotes.find((task) => {
+        const date = new Date()
+
+        if (
+          task.day == date.getDate() &&
+          task.month == date.getMonth() + 1 &&
+          task.year == date.getFullYear() &&
+          task.hour == date.getHours() &&
+          task.minutes == date.getMinutes()
+        ) {
+          return task
+        }
+
+        return undefined
+      })
+
+      if (unnotifiedNote == undefined) return
+
+      window.electron.ipcRenderer.invoke('maximize-window')
+    }, 60000) // per minute
   }, [])
 
   return (
     <div className="container">
-      {tasks?.map((task) => {
+      {unnotifiedNotes?.map((task) => {
         return (
           <Card key={task.title}>
             <Card.Body>
@@ -26,6 +54,10 @@ function App(): JSX.Element {
           </Card>
         )
       })}
+
+      <FloatingActionButton>
+        <Plus />
+      </FloatingActionButton>
     </div>
   )
 }
