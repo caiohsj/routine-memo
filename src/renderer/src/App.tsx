@@ -14,6 +14,7 @@ type Note = {
 
 function App(): JSX.Element {
   const [unnotifiedNotes, setUnnotifiedNotes] = useState<Note[]>([])
+  const [showNoteForm, setShowNoteForm] = useState(false)
 
   useEffect(() => {
     setInterval(() => {
@@ -54,7 +55,7 @@ function App(): JSX.Element {
 
   return (
     <div className="container">
-      <NoteForm handleForm={createNote} />
+      {showNoteForm ? <NoteForm handleForm={createNote} /> : <></>}
 
       {unnotifiedNotes?.map((note) => {
         return (
@@ -67,7 +68,7 @@ function App(): JSX.Element {
         )
       })}
 
-      <FloatingActionButton>
+      <FloatingActionButton onClick={(): void => setShowNoteForm(!showNoteForm)}>
         <Plus />
       </FloatingActionButton>
     </div>

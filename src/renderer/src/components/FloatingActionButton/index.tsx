@@ -2,11 +2,14 @@ import { Button } from 'react-bootstrap'
 import './style.css'
 
 type FABProps = {
-  children: JSX.Element
+  children: JSX.Element,
+  onClick(): void
 }
 
-const FloatingActionButton = ({ children }: FABProps): JSX.Element => (
-  <Button className="fab">{children}</Button>
+const FloatingActionButton = ({ children, ...props }: FABProps): JSX.Element => (
+  <Button className="fab" {...props}>
+    {children}
+  </Button>
 )
 
 export { FloatingActionButton }
