@@ -2,6 +2,38 @@ import { app, shell, BrowserWindow, ipcMain, screen } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import Store from 'electron-store'
+import type { Schema } from 'electron-store'
+import { Note } from '../@types/note'
+
+type AppSchema = {
+  notes: Array<Note>
+}
+
+const schema: Schema<AppSchema> = {
+  notes: {
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string'
+        },
+        title: {
+          type: 'string'
+        },
+        description: {
+          type: 'string'
+        },
+        date: {
+          type: 'string'
+        }
+      }
+    }
+  }
+}
+
+const store = new Store({ schema })
 
 function createWindow(): void {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize
@@ -39,6 +71,15 @@ function createWindow(): void {
   ipcMain.handle('maximize-window', () => {
     mainWindow.maximize()
   })
+
+  ipcMain.on('store-notes', (event, notes) => {
+    try {
+      store.set('notes', notes)
+      event.reply('load-notes', store.get('notes'))
+    } catch (e) {
+      console.log(e)
+    }
+  })
 }
 
 // This method will be called when Electron has finished
@@ -62,6 +103,8 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  Store.initRenderer()
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

@@ -23,6 +23,7 @@
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
     "bootstrap": "^4.6.0",
+    "electron-store": "^8.1.0",
     "electron-updater": "^6.1.1",
     "lucide-react": "^0.292.0",
     "react-bootstrap": "^2.9.1",

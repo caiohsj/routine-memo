@@ -1,34 +1,35 @@
 import { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { Plus } from 'lucide-react'
-import Card from 'react-bootstrap/Card'
+import { Card, Badge } from 'react-bootstrap'
 import { FloatingActionButton } from './components/FloatingActionButton'
 import { NoteForm, NoteFormInputs } from './components/NoteForm'
-
-type Note = {
-  id: string
-  title: string
-  description: string
-  date: Date
-}
+import { Note } from 'src/@types/note'
 
 function App(): JSX.Element {
   const [unnotifiedNotes, setUnnotifiedNotes] = useState<Note[]>([])
   const [showNoteForm, setShowNoteForm] = useState(false)
 
+  window.electron.ipcRenderer.on('load-notes', (_, notes) => {
+    setUnnotifiedNotes(notes)
+  })
+
   useEffect(() => {
     setInterval(() => {
+      console.log('rodou')
       if (unnotifiedNotes?.length < 1) return
 
       const unnotifiedNote = unnotifiedNotes.find((note) => {
         const date = new Date()
+        const noteDate = new Date(note.date)
 
         if (
-          note.date.getDate() == date.getDate() &&
-          note.date.getMonth() == date.getMonth() &&
-          note.date.getFullYear() == date.getFullYear() &&
-          note.date.getHours() == date.getHours() &&
-          note.date.getMinutes() == date.getMinutes()
+          note.date &&
+          noteDate.getDate() == date.getDate() &&
+          noteDate.getMonth() == date.getMonth() &&
+          noteDate.getFullYear() == date.getFullYear() &&
+          noteDate.getHours() == date.getHours() &&
+          noteDate.getMinutes() == date.getMinutes()
         ) {
           return note
         }
@@ -47,10 +48,12 @@ function App(): JSX.Element {
       id: uuidv4(),
       title,
       description,
-      date: new Date(`${date} ${time}`)
+      date: date && time ? new Date(`${date} ${time}`).toJSON() : ''
     }
 
-    setUnnotifiedNotes([...unnotifiedNotes, newNote])
+    const notes = [...unnotifiedNotes, newNote]
+
+    window.electron.ipcRenderer.send('store-notes', notes)
   }
 
   return (
@@ -61,7 +64,10 @@ function App(): JSX.Element {
         return (
           <Card className="mt-3" key={note.id}>
             <Card.Body>
-              <Card.Title>{note.title}</Card.Title>
+              <Card.Title>
+                <span>{note.title}</span>
+                <Badge bg="primary">{note.date}</Badge>
+              </Card.Title>
               <Card.Text>{note.description}</Card.Text>
             </Card.Body>
           </Card>
