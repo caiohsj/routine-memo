@@ -16,7 +16,6 @@ function App(): JSX.Element {
 
   useEffect(() => {
     setInterval(() => {
-      console.log('rodou')
       if (unnotifiedNotes?.length < 1) return
 
       const unnotifiedNote = unnotifiedNotes.find((note) => {
@@ -56,6 +55,13 @@ function App(): JSX.Element {
     window.electron.ipcRenderer.send('store-notes', notes)
   }
 
+  const dateFormat = (dateString: string): string => {
+    const date = new Date(dateString)
+    return `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
+  }
+
   return (
     <div className="container">
       {showNoteForm ? <NoteForm handleForm={createNote} /> : <></>}
@@ -64,9 +70,9 @@ function App(): JSX.Element {
         return (
           <Card className="mt-3" key={note.id}>
             <Card.Body>
-              <Card.Title>
+              <Card.Title className="d-flex justify-content-between">
                 <span>{note.title}</span>
-                <Badge bg="primary">{note.date}</Badge>
+                {note.date ? <Badge bg="primary">{dateFormat(note.date)}</Badge> : <></>}
               </Card.Title>
               <Card.Text>{note.description}</Card.Text>
             </Card.Body>
