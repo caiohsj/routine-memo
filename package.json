@@ -25,7 +25,8 @@
     "bootstrap": "^4.6.0",
     "electron-updater": "^6.1.1",
     "lucide-react": "^0.292.0",
-    "react-bootstrap": "^2.9.1"
+    "react-bootstrap": "^2.9.1",
+    "react-hook-form": "^7.48.2"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",

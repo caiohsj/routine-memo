@@ -2,19 +2,16 @@ import { useEffect, useState } from 'react'
 import Card from 'react-bootstrap/Card'
 import { FloatingActionButton } from './components/FloatingActionButton'
 import { Plus } from 'lucide-react'
+import { NoteForm, NoteFormInputs } from './components/NoteForm'
 
 type Note = {
   title: string
   description: string
-  day?: number
-  month?: number
-  year?: number
-  hour?: number
-  minutes?: number
+  date: Date
 }
 
 function App(): JSX.Element {
-  const [unnotifiedNotes] = useState<Note[]>([])
+  const [unnotifiedNotes, setUnnotifiedNotes] = useState<Note[]>([])
 
   useEffect(() => {
     setInterval(() => {
@@ -24,11 +21,11 @@ function App(): JSX.Element {
         const date = new Date()
 
         if (
-          task.day == date.getDate() &&
-          task.month == date.getMonth() + 1 &&
-          task.year == date.getFullYear() &&
-          task.hour == date.getHours() &&
-          task.minutes == date.getMinutes()
+          task.date.getDate() == date.getDate() &&
+          task.date.getMonth() == date.getMonth() &&
+          task.date.getFullYear() == date.getFullYear() &&
+          task.date.getHours() == date.getHours() &&
+          task.date.getMinutes() == date.getMinutes()
         ) {
           return task
         }
@@ -42,8 +39,20 @@ function App(): JSX.Element {
     }, 60000) // per minute
   }, [])
 
+  const createNote = ({ title, description, date, time }: NoteFormInputs): void => {
+    const newNote = {
+      title,
+      description,
+      date: new Date(`${date} ${time}`)
+    }
+
+    setUnnotifiedNotes([...unnotifiedNotes, newNote])
+  }
+
   return (
     <div className="container">
+      <NoteForm handleForm={createNote} />
+
       {unnotifiedNotes?.map((task) => {
         return (
           <Card key={task.title}>
