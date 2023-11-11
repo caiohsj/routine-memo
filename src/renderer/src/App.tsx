@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
+import { Plus } from 'lucide-react'
 import Card from 'react-bootstrap/Card'
 import { FloatingActionButton } from './components/FloatingActionButton'
-import { Plus } from 'lucide-react'
 import { NoteForm, NoteFormInputs } from './components/NoteForm'
 
 type Note = {
+  id: string
   title: string
   description: string
   date: Date
@@ -41,6 +43,7 @@ function App(): JSX.Element {
 
   const createNote = ({ title, description, date, time }: NoteFormInputs): void => {
     const newNote = {
+      id: uuidv4(),
       title,
       description,
       date: new Date(`${date} ${time}`)
@@ -53,12 +56,12 @@ function App(): JSX.Element {
     <div className="container">
       <NoteForm handleForm={createNote} />
 
-      {unnotifiedNotes?.map((task) => {
+      {unnotifiedNotes?.map((note) => {
         return (
-          <Card key={task.title}>
+          <Card className="mt-3" key={note.id}>
             <Card.Body>
-              <Card.Title>{task.title}</Card.Title>
-              <Card.Text>{task.description}</Card.Text>
+              <Card.Title>{note.title}</Card.Title>
+              <Card.Text>{note.description}</Card.Text>
             </Card.Body>
           </Card>
         )
