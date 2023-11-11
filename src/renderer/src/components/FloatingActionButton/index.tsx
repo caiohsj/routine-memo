@@ -2,7 +2,7 @@ import { Button } from 'react-bootstrap'
 import './style.css'
 
 type FABProps = {
-  children: JSX.Element,
+  children: JSX.Element
   onClick(): void
 }
 

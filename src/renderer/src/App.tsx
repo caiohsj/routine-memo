@@ -20,17 +20,17 @@ function App(): JSX.Element {
     setInterval(() => {
       if (unnotifiedNotes?.length < 1) return
 
-      const unnotifiedNote = unnotifiedNotes.find((task) => {
+      const unnotifiedNote = unnotifiedNotes.find((note) => {
         const date = new Date()
 
         if (
-          task.date.getDate() == date.getDate() &&
-          task.date.getMonth() == date.getMonth() &&
-          task.date.getFullYear() == date.getFullYear() &&
-          task.date.getHours() == date.getHours() &&
-          task.date.getMinutes() == date.getMinutes()
+          note.date.getDate() == date.getDate() &&
+          note.date.getMonth() == date.getMonth() &&
+          note.date.getFullYear() == date.getFullYear() &&
+          note.date.getHours() == date.getHours() &&
+          note.date.getMinutes() == date.getMinutes()
         ) {
-          return task
+          return note
         }
 
         return undefined
@@ -40,7 +40,7 @@ function App(): JSX.Element {
 
       window.electron.ipcRenderer.invoke('maximize-window')
     }, 60000) // per minute
-  }, [])
+  }, [unnotifiedNotes])
 
   const createNote = ({ title, description, date, time }: NoteFormInputs): void => {
     const newNote = {
