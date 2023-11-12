@@ -27,6 +27,9 @@ const schema: Schema<AppSchema> = {
         },
         date: {
           type: 'string'
+        },
+        daily: {
+          type: 'boolean'
         }
       }
     }
@@ -53,6 +56,7 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    if (store.has('notes')) mainWindow.webContents.send('load-notes', store.get('notes'))
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

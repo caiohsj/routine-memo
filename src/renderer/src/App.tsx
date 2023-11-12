@@ -16,6 +16,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     setInterval(() => {
+      console.log(unnotifiedNotes)
       if (unnotifiedNotes?.length < 1) return
 
       const unnotifiedNote = unnotifiedNotes.find((note) => {
@@ -33,6 +34,15 @@ function App(): JSX.Element {
           return note
         }
 
+        if (
+          note.date &&
+          note.daily &&
+          noteDate.getHours() == date.getHours() &&
+          noteDate.getMinutes() == date.getMinutes()
+        ) {
+          return note
+        }
+
         return undefined
       })
 
@@ -42,14 +52,16 @@ function App(): JSX.Element {
     }, 60000) // per minute
   }, [unnotifiedNotes])
 
-  const createNote = ({ title, description, date, time }: NoteFormInputs): void => {
+  const createNote = ({ title, description, date, time, daily }: NoteFormInputs): void => {
     const newNote = {
       id: uuidv4(),
       title,
       description,
-      date: date && time ? new Date(`${date} ${time}`).toJSON() : ''
+      date: date && time ? new Date(`${date} ${time}`).toJSON() : '',
+      daily
     }
 
+    console.log(unnotifiedNotes)
     const notes = [...unnotifiedNotes, newNote]
 
     window.electron.ipcRenderer.send('store-notes', notes)
@@ -72,7 +84,23 @@ function App(): JSX.Element {
             <Card.Body>
               <Card.Title className="d-flex justify-content-between">
                 <span>{note.title}</span>
-                {note.date ? <Badge bg="primary">{dateFormat(note.date)}</Badge> : <></>}
+                <div>
+                  {note.date ? (
+                    <Badge className="mr-2" text="white" bg="info" pill={true}>
+                      {dateFormat(note.date)}
+                    </Badge>
+                  ) : (
+                    <></>
+                  )}
+
+                  {note.daily ? (
+                    <Badge text="white" bg="success" pill={true}>
+                      Nota diária
+                    </Badge>
+                  ) : (
+                    <></>
+                  )}
+                </div>
               </Card.Title>
               <Card.Text>{note.description}</Card.Text>
             </Card.Body>

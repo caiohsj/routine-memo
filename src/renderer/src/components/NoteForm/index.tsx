@@ -6,6 +6,7 @@ type NoteFormInputs = {
   description: string
   date: string
   time: string
+  daily: boolean
 }
 
 type NoteFormProps = {
@@ -36,6 +37,14 @@ const NoteForm = ({ handleForm }: NoteFormProps): JSX.Element => {
         <Form.Control className="mb-2" type="date" {...register('date')} />
         <Form.Control type="time" {...register('time')} />
       </Form.Group>
+
+      <Form.Check
+        className="mb-3"
+        type="checkbox"
+        id="daily"
+        label="Aviso diário?"
+        {...register('daily')}
+      />
 
       <Button type="submit">Salvar</Button>
     </Form>
