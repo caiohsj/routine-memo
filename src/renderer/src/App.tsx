@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { Plus } from 'lucide-react'
-import { Card, Badge } from 'react-bootstrap'
+import { Plus, Trash } from 'lucide-react'
+import { Card, Badge, Button } from 'react-bootstrap'
 import { FloatingActionButton } from './components/FloatingActionButton'
 import { NoteForm, NoteFormInputs } from './components/NoteForm'
 import { Note } from 'src/@types/note'
@@ -61,10 +61,14 @@ function App(): JSX.Element {
       daily
     }
 
-    console.log(unnotifiedNotes)
     const notes = [...unnotifiedNotes, newNote]
 
     window.electron.ipcRenderer.send('store-notes', notes)
+  }
+
+  const deleteNote = (note: Note): void => {
+    const newUnnotifiedNotes = unnotifiedNotes.filter((n) => n.id != note.id)
+    window.electron.ipcRenderer.send('store-notes', newUnnotifiedNotes)
   }
 
   const dateFormat = (dateString: string): string => {
@@ -86,7 +90,7 @@ function App(): JSX.Element {
                 <span>{note.title}</span>
                 <div>
                   {note.date ? (
-                    <Badge className="mr-2" text="white" bg="info" pill={true}>
+                    <Badge text="white" bg="info" pill={true}>
                       {dateFormat(note.date)}
                     </Badge>
                   ) : (
@@ -100,6 +104,9 @@ function App(): JSX.Element {
                   ) : (
                     <></>
                   )}
+                  <Button className="ml-2" variant="danger" onClick={(): void => deleteNote(note)}>
+                    <Trash />
+                  </Button>
                 </div>
               </Card.Title>
               <Card.Text>{note.description}</Card.Text>
