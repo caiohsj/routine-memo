@@ -16,7 +16,6 @@ function App(): JSX.Element {
 
   useEffect(() => {
     setInterval(() => {
-      console.log(unnotifiedNotes)
       if (unnotifiedNotes?.length < 1) return
 
       const unnotifiedNote = unnotifiedNotes.find((note) => {
@@ -49,6 +48,8 @@ function App(): JSX.Element {
       if (unnotifiedNote == undefined) return
 
       window.electron.ipcRenderer.invoke('maximize-window')
+
+      new window.Notification(unnotifiedNote.title, { body: unnotifiedNote.description })
     }, 60000) // per minute
   }, [unnotifiedNotes])
 
